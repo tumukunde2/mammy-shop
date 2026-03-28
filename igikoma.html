@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<title>IFU Y’IGIKOMA | MAMMY SHOOP</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f6f8;
+  padding:20px;
+  color:#333;
+}
+header{
+  background:linear-gradient(135deg,#4b2c50,#9b59b6);
+  color:white;
+  padding:25px;
+  text-align:center;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+nav{
+  background:white;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+nav a{
+  text-decoration:none;
+  color:#2c3e50;
+  font-weight:bold;
+  padding:8px 18px;
+  border-radius:20px;
+}
+nav a:hover{background:#3498db;color:white;}
+
+h2{text-align:center;margin-bottom:15px;color:#4b2c50;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+thead{background:#4b2c50;color:white;}
+th,td{padding:10px;text-align:center;font-size:13px;}
+tbody tr:nth-child(even){background:#f9f9f9;}
+tbody tr:hover{background:#f3e9f7;}
+
+input{
+  width:100%;
+  padding:6px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+input:focus{outline:none;border-color:#9b59b6;}
+
+.buttons{margin-top:20px;text-align:center;}
+button{
+  padding:12px 25px;
+  border:none;
+  border-radius:25px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:5px;
+}
+.add{background:#9b59b6;color:white;}
+.save{background:#2ecc71;color:white;}
+
+footer{
+  margin-top:30px;
+  text-align:center;
+  font-size:13px;
+  color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>MAMMY SHOOP</h1>
+  <p>Icuruzwa ry’Ifu y’Igikoma</p>
+</header>
+
+<nav>
+  <a href="index.html">Ahabanza</a>
+  <a href="ibicuruzwa.html">Ibicuruzwa</a>
+    <a href="abo turi bo.html">Abo turi bo</a>
+  <a href="stock.html">Stock</a>
+  <a href="inyungu.html">Inyungu</a>
+  <a href="user.html">User</a>
+  <a href="searching.html">Searching</a>
+</nav>
+
+<h2>IMBONERAHAMWE Y’IFU Y’IGIKOMA</h2>
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Ubwoko bw’Ifu y’Igikoma</th>
+<th>Ingano yinjiriye</th>
+<th>Igiciro waranguriyeho</th>
+<th>Itariki</th>
+<th>Uwagurishijwe</th>
+<th>Telephone</th>
+<th>Uwaguze muri SHOP</th>
+<th>Ingano yasohotse</th>
+<th>Igiciro cyo kugurisha</th>
+<th>Itariki</th>
+<th>STOCK ISIGAYE</th>
+<th>GUSIBA</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<div class="buttons">
+  <button class="add" onclick="addRow()">Ongeramo Umurongo</button>
+  <button class="save" onclick="saveData()">Bika Amakuru</button>
+</div>
+
+<footer>
+  <p>&copy; 2026 MAMMY SHOOP</p>
+      <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</footer>
+
+<script>
+let tbody = document.getElementById("tbody");
+
+/* ➕ Ongeramo umurongo */
+function addRow(data = []) {
+  let row = tbody.insertRow();
+
+  for(let i=0;i<11;i++){
+    let cell = row.insertCell();
+    let input = document.createElement("input");
+    input.value = data[i] || "";
+
+    if(i === 2 || i === 8){
+      input.addEventListener("input", () => calculateStock(row));
+    }
+    cell.appendChild(input);
+  }
+
+  // STOCK ISIGAYE
+  let stockCell = row.insertCell();
+  let stockInput = document.createElement("input");
+  stockInput.readOnly = true;
+  stockInput.style.background="#f3e9f7";
+  stockCell.appendChild(stockInput);
+
+  // DELETE
+  let delCell = row.insertCell();
+  let delBtn = document.createElement("button");
+  delBtn.textContent="SIBA";
+  delBtn.className="save";
+  delBtn.onclick = () => {
+    row.remove();
+    saveData();
+  };
+  delCell.appendChild(delBtn);
+
+  calculateStock(row);
+}
+
+/* 📦 Barura stock isigaye */
+function calculateStock(row){
+  let injira = Number(row.cells[2].firstChild.value)||0;
+  let sohoka = Number(row.cells[8].firstChild.value)||0;
+  row.cells[11].firstChild.value = injira - sohoka;
+}
+
+/* 💾 Bika & Huza n'inyungu */
+function saveData(){
+  let rows = [];
+  let allSales = JSON.parse(localStorage.getItem("productSales")) || [];
+
+  // ❌ Siba inyungu zishaje z’Ifu y’Igikoma
+  allSales = allSales.filter(sale => sale.product !== "Ifu y'Igikoma");
+
+  for(let row of tbody.rows){
+    let rowData = [];
+    for(let i=0;i<12;i++){
+      rowData.push(row.cells[i].firstChild.value);
+    }
+    rows.push(rowData);
+
+    let buyPrice  = Number(row.cells[3].firstChild.value)||0;
+    let sellPrice = Number(row.cells[9].firstChild.value)||0;
+    let qtyOut    = Number(row.cells[8].firstChild.value)||0;
+
+    if(buyPrice > 0 && sellPrice > 0 && qtyOut > 0){
+      allSales.push({
+        product: "Ifu y'Igikoma",
+        buyPrice: buyPrice,
+        sellPrice: sellPrice,
+        quantity: qtyOut,
+        profit: (sellPrice - buyPrice) * qtyOut
+      });
+    }
+  }
+
+  localStorage.setItem("igikomaData", JSON.stringify(rows));
+  localStorage.setItem("productSales", JSON.stringify(allSales));
+
+  alert("✔ Ifu y'igikoma yabitswe, inyungu zavuguruwe neza!");
+}
+
+/* 🔄 Load data */
+function loadData(){
+  let data = JSON.parse(localStorage.getItem("igikomaData")) || [];
+  data.forEach(r => addRow(r));
+}
+loadData();
+</script>
+
+</body>
+</html>

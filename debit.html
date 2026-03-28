@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMMY SHOP | Debts</title>
+<link rel="icon" href="logo.jpeg" type="image/jpeg">
+<style>
+body { margin:0; font-family:Arial,sans-serif; background:#f4f6f9; color:#333;}
+header { position:relative; background:url('logo.jpeg') center/cover no-repeat, linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)); color:white; padding:20px; text-align:center;}
+.header-logo { position:absolute; left:20px; top:50%; transform:translateY(-50%);}
+.header-logo img { height:120px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px rgba(0,0,0,0.5);}
+.header-title { font-size:28px; font-weight:bold; text-shadow:1px 1px 3px rgba(0,0,0,0.5); color:black}
+
+nav { text-align:center; margin:15px;}
+nav a { text-decoration:none; display:inline-block; background:#007BFF; color:white; padding:10px 20px; border-radius:8px; transition:0.3s;}
+nav a:hover { background:#0056b3;}
+
+main { max-width:1200px; margin:20px auto; padding:20px; background:white; border-radius:10px; min-height:500px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { padding:10px; border:1px solid #ddd; text-align:center; }
+th { background:#007BFF; color:white; }
+tbody tr:hover { background:#f1faff; }
+
+button { padding:6px 12px; border:none; border-radius:6px; margin:2px; cursor:pointer; }
+button.add { background:#28a745; color:white; }
+button.edit { background:#ffc107; color:white; }
+button.edit:hover { background:#28a745; color:white; }
+button.delete { background:#dc3545; color:white; }
+button.delete:hover { background:#c82333; color:white; }
+
+.total { text-align:right; font-weight:bold; margin-top:15px; }
+
+footer { text-align:center; padding:15px; background:linear-gradient(90deg,#00c6ff,#007BFF); color:white; margin-top:20px; border-radius:0 0 10px 10px;}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="header-logo"><img src="logo.jpeg" alt="Logo"></div>
+    <div class="header-title">📋 MAMMY SHOP | Debts</div>
+</header>
+
+<nav>
+    <a href="dashboad.html">⬅️ Back to Dashboard</a>
+</nav>
+
+<main>
+    <h2>Debts started on 22/03/2026 to improve</h2>
+    <button class="add" onclick="addDebt()">➕ Add Debt</button>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Amount Owed (RWF)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="debtsBody"></tbody>
+    </table>
+    <div class="total" id="totalDebts">Total Debts: 0 RWF</div>
+</main>
+
+<footer>© 2026 Mammy Shop
+    <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</footer>
+
+<script>
+// ===== Local Storage Key =====
+const STORAGE_KEY = "mammyDebts";
+let debts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+// ===== Functions =====
+function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(debts)); renderDebts(); }
+
+function addDebt(){
+    const customer = prompt("Customer Name:"); if(!customer) return;
+    const date = prompt("Date (YYYY-MM-DD):", new Date().toISOString().split("T")[0]); if(!date) return;
+    const amount = parseFloat(prompt("Amount Owed (RWF):", "0")); if(isNaN(amount)) return;
+    debts.push({customer,date,amount});
+    saveData();
+}
+
+function editDebt(index){
+    const debt = debts[index];
+    debt.customer = prompt("Customer Name:", debt.customer) || debt.customer;
+    debt.date = prompt("Date (YYYY-MM-DD):", debt.date) || debt.date;
+    const amt = parseFloat(prompt("Amount Owed (RWF):", debt.amount));
+    if(!isNaN(amt)) debt.amount = amt;
+    saveData();
+}
+
+function deleteDebt(index){
+    if(confirm("Urashaka rwose gusiba uyu murongo?")){
+        debts.splice(index,1);
+        saveData();
+    }
+}
+
+function renderDebts(){
+    const body = document.getElementById('debtsBody');
+    body.innerHTML = "";
+    let total = 0;
+    debts.forEach((d,i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${d.customer}</td><td>${d.date}</td><td>${d.amount.toFixed(2)}</td>
+        <td>
+            <button class="edit" onclick="editDebt(${i})">✏️ Edit</button>
+            <button class="delete" onclick="deleteDebt(${i})">🗑️ Delete</button>
+        </td>`;
+        body.appendChild(tr);
+        total += d.amount;
+    });
+    document.getElementById('totalDebts').innerText = "Total Debts: " + total.toFixed(2) + " RWF";
+}
+
+// Initial render
+renderDebts();
+</script>
+
+</body>
+</html>

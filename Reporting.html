@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMMY SHOP - Daily Report</title>
+
+<link rel="icon" href="logo.jpeg">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+body {
+  font-family:'Segoe UI', Arial;
+  background:#f4f6f9;
+  margin:0;
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('logo.jpeg') center/cover no-repeat;
+  color:white;
+  padding:18px 0 0 0;
+}
+
+/* HEADER CONTENT */
+.header-content{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  padding-bottom:10px;
+}
+
+.header-logo{
+  position:absolute;
+  left:20px;
+}
+
+.header-logo img{
+  height:75px;
+  border-radius:50%;
+  border:2px solid white;
+}
+
+.header-title{
+  font-size:24px;
+  font-weight:bold;
+}
+
+/* NAV INSIDE HEADER */
+.top-bar{
+  background:rgba(255,255,255,0.95);
+  backdrop-filter: blur(6px);
+  padding:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  box-shadow:0 3px 12px rgba(0,0,0,0.12);
+}
+
+/* SEARCH */
+#searchInput{
+  width:280px;
+  padding:10px;
+  font-size:15px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* BUTTONS */
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  transition:0.3s;
+}
+
+/* NAV BUTTONS */
+.back{
+  background:#007BFF;
+  color:white;
+}
+.back:hover{
+  background:#ff3b3b;
+  transform:scale(1.05);
+}
+
+.add{
+  background:#28a745;
+  color:white;
+}
+.add:hover{
+  background:#1e7e34;
+  transform:scale(1.05);
+}
+
+.download{
+  background:#007BFF;
+  color:white;
+}
+.download:hover{
+  background:#0056b3;
+  transform:scale(1.05);
+}
+
+/* ACTION BUTTONS */
+.edit{
+  background:orange;
+  color:white;
+}
+.edit:hover{
+  background:#ff9800;
+  transform:scale(1.15);
+}
+
+.delete{
+  background:red;
+  color:white;
+}
+.delete:hover{
+  background:#b30000;
+  transform:scale(1.15);
+}
+
+/* CONTAINER */
+.container{
+  max-width:1100px;
+  margin:20px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+  font-size:15px;
+}
+
+th,td{
+  padding:14px;
+  border:1px solid #ddd;
+  text-align:center;
+}
+
+th{
+  background:#007BFF;
+  color:white;
+}
+
+/* SUMMARY */
+.summary-card{
+  flex:1;
+  min-width:220px;
+  padding:12px;
+  background:#e6f2ff;
+  border-radius:10px;
+  text-align:center;
+}
+
+#dailySummary, #weeklyMonthlySummary{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* FOOTER */
+footer{
+  margin-top:20px;
+  background:#007BFF;
+  color:white;
+  text-align:center;
+  padding:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="header-content">
+    <div class="header-logo"><img src="logo.jpeg"></div>
+    <div class="header-title">📊 MAMMY SHOP - Daily Report Pro</div>
+  </div>
+
+  <div class="top-bar">
+    <button class="back" onclick="history.back()">⬅ Back</button>
+    <input type="text" id="searchInput" placeholder="🔍 Search..." oninput="renderRows()">
+    <button class="add" onclick="addProductRow()">➕ Add Product</button>
+    <button class="download" onclick="downloadPDF()">📄 Download PDF</button>
+  </div>
+
+</header>
+
+<div class="container">
+
+<div id="pdfArea">
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Product</th>
+<th>Date</th>
+<th>Qty</th>
+<th>Total Cost</th>
+<th>Total Price</th>
+<th>Profit</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="reportBody"></tbody>
+
+<tfoot>
+<tr>
+<td colspan="4">Total</td>
+<td id="totalEntered">0</td>
+<td id="totalCameOut">0</td>
+<td id="totalProfit">0</td>
+<td></td>
+</tr>
+</tfoot>
+</table>
+
+</div>
+
+<canvas id="salesChart"></canvas>
+
+<div id="dailySummary"></div>
+<div id="weeklyMonthlySummary"></div>
+
+</div>
+
+<footer>© 2026 MAMMY SHOP
+      <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</footer>
+
+<script>
+const STORAGE_KEY="mammyDailyReport";
+let savedRows=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];
+let chart;
+
+/* ADD */
+function addProductRow(){
+  let name=prompt("Product:");
+  if(!name)return;
+
+  let date=prompt("Date:",new Date().toISOString().split("T")[0]);
+  let quantity=parseInt(prompt("Quantity:","1"))||1;
+  let entered=parseFloat(prompt("Cost:","0"))||0;
+  let cameOut=parseFloat(prompt("Price:","0"))||0;
+
+  savedRows.push({name,date,quantity,entered,cameOut});
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(savedRows));
+  renderRows();
+}
+
+/* EDIT */
+function editRow(index){
+  let r=savedRows[index];
+  r.name=prompt("Product:",r.name)||r.name;
+  r.date=prompt("Date:",r.date)||r.date;
+  r.quantity=parseInt(prompt("Quantity:",r.quantity))||1;
+  r.entered=parseFloat(prompt("Cost:",r.entered))||0;
+  r.cameOut=parseFloat(prompt("Price:",r.cameOut))||0;
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(savedRows));
+  renderRows();
+}
+
+/* DELETE */
+function deleteRow(index){
+  if(confirm("Delete this item?")){
+    savedRows.splice(index,1);
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(savedRows));
+    renderRows();
+  }
+}
+
+/* RENDER */
+function renderRows(){
+  let body=document.getElementById("reportBody");
+  body.innerHTML="";
+
+  let search=document.getElementById("searchInput").value.toLowerCase();
+
+  let filtered=savedRows
+    .map((row,i)=>({...row, realIndex:i}))
+    .filter(r=>r.name.toLowerCase().includes(search)||r.date.includes(search));
+
+  let totalE=0,totalC=0,totalP=0;
+  let dailyTotals={}, weeklyTotals={cost:0,price:0,profit:0}, monthlyTotals={cost:0,price:0,profit:0};
+
+  let today=new Date();
+
+  filtered.forEach((row,i)=>{
+    let q=row.quantity||1;
+    let cost=row.entered*q;
+    let price=row.cameOut*q;
+    let profit=price-cost;
+
+    totalE+=cost;
+    totalC+=price;
+    totalP+=profit;
+
+    if(!dailyTotals[row.date]) dailyTotals[row.date]={cost:0,price:0,profit:0};
+    dailyTotals[row.date].cost+=cost;
+    dailyTotals[row.date].price+=price;
+    dailyTotals[row.date].profit+=profit;
+
+    let rowDate=new Date(row.date);
+    let diff=(today-rowDate)/(1000*3600*24);
+
+    if(diff<=6){
+      weeklyTotals.cost+=cost;
+      weeklyTotals.price+=price;
+      weeklyTotals.profit+=profit;
+    }
+
+    if(rowDate.getMonth()===today.getMonth()){
+      monthlyTotals.cost+=cost;
+      monthlyTotals.price+=price;
+      monthlyTotals.profit+=profit;
+    }
+
+    body.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${row.name}</td>
+      <td>${row.date}</td>
+      <td>${row.quantity}</td>
+      <td>${cost.toFixed(2)}</td>
+      <td>${price.toFixed(2)}</td>
+      <td>${profit.toFixed(2)}</td>
+      <td>
+        <button class="edit" onclick="editRow(${row.realIndex})">✏️</button>
+        <button class="delete" onclick="deleteRow(${row.realIndex})">🗑️</button>
+      </td>
+    </tr>`;
+  });
+
+  document.getElementById("totalEntered").innerText=totalE.toFixed(2);
+  document.getElementById("totalCameOut").innerText=totalC.toFixed(2);
+  document.getElementById("totalProfit").innerText=totalP.toFixed(2);
+
+  let d=document.getElementById("dailySummary");
+  d.innerHTML="<h3>Daily Totals</h3>";
+  Object.keys(dailyTotals).forEach(date=>{
+    d.innerHTML+=`
+    <div class="summary-card">
+      📅 ${date}<br>
+      Cost: ${dailyTotals[date].cost.toFixed(2)}<br>
+      Price: ${dailyTotals[date].price.toFixed(2)}<br>
+      Profit: ${dailyTotals[date].profit.toFixed(2)}
+    </div>`;
+  });
+
+  let w=document.getElementById("weeklyMonthlySummary");
+  w.innerHTML=`
+  <div class="summary-card">
+    <h3>Weekly</h3>
+    Cost: ${weeklyTotals.cost.toFixed(2)}<br>
+    Price: ${weeklyTotals.price.toFixed(2)}<br>
+    Profit: ${weeklyTotals.profit.toFixed(2)}
+  </div>
+
+  <div class="summary-card">
+    <h3>Monthly</h3>
+    Cost: ${monthlyTotals.cost.toFixed(2)}<br>
+    Price: ${monthlyTotals.price.toFixed(2)}<br>
+    Profit: ${monthlyTotals.profit.toFixed(2)}
+  </div>`;
+
+  updateChart(dailyTotals);
+}
+
+/* CHART */
+function updateChart(data){
+  let labels=Object.keys(data);
+  let values=Object.values(data).map(d=>d.price);
+
+  if(chart) chart.destroy();
+
+  chart=new Chart(document.getElementById("salesChart"),{
+    type:"line",
+    data:{
+      labels,
+      datasets:[{
+        label:"Daily Sales",
+        data:values,
+        borderColor:"#007BFF",
+        backgroundColor:"rgba(0,123,255,0.2)",
+        fill:true
+      }]
+    }
+  });
+}
+
+/* PDF */
+function downloadPDF(){
+  html2pdf().from(document.getElementById("pdfArea")).save("report.pdf");
+}
+
+renderRows();
+</script>
+
+</body>
+</html>

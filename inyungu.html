@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<title>INYUNGU ZOSE | MAMMY SHOOP</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  padding:20px;
+}
+header{
+  background:#4b2c50;
+  color:white;
+  padding:20px;
+  text-align:center;
+  border-radius:10px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  margin-top:20px;
+}
+th,td{
+  padding:10px;
+  text-align:center;
+}
+thead{
+  background:#4b2c50;
+  color:white;
+}
+tbody tr:nth-child(even){background:#f9f9f9;}
+tbody tr:hover{background:#f3e9f7;}
+.total{
+  margin-top:20px;
+  background:white;
+  padding:15px;
+  font-size:18px;
+  font-weight:bold;
+  text-align:center;
+  border-radius:10px;
+  color:#27ae60;
+}
+nav{
+  background:white;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:15px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+  margin-bottom:20px;
+}
+nav a{
+  text-decoration:none;
+  color:#2c3e50;
+  font-weight:bold;
+  padding:8px 18px;
+  border-radius:20px;
+}
+nav a:hover{background:#3498db;color:white;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>MAMMY SHOOP</h1>
+  <p>Inyungu zivuye mu bicuruzwa byose (Automatic & Kuri Order y'Urutonde)</p>
+</header>
+
+<nav>
+  <a href="index.html">Ahabanza</a>
+  <a href="ibicuruzwa.html">Ibicuruzwa</a>
+  <a href="abo turi bo.html">Abo turi bo</a>
+  <a href="stock.html">Stock</a>
+  <a href="inyungu.html">Inyungu</a>
+  <a href="user.html">User</a>
+  <a href="searching.html">Searching</a>
+</nav>
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Igicuruzwa</th>
+<th>Ubwoko bw’Igicuruzwa</th>
+<th>Igiciro Yaranguye</th>
+<th>Igiciro Yagurishije</th>
+<th>Ingano yasohotse</th>
+<th>INYUNGU</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<div class="total">
+  TOTAL Y’INYUNGU ZOSE: <span id="totalProfit">0</span> RWF
+      <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</div>
+
+<script>
+const tbody = document.getElementById("tbody");
+const totalProfitEl = document.getElementById("totalProfit");
+
+// Fata sales zose ziri muri localStorage
+let sales = JSON.parse(localStorage.getItem("productSales")) || [];
+
+let total = 0;
+
+sales.forEach((item, index) => {
+  let row = tbody.insertRow();
+  
+  // No
+  row.insertCell().textContent = index + 1;
+
+  // Product name
+  row.insertCell().textContent = item.product;
+
+  // Ubwoko bw’Igicuruzwa (after product)
+  row.insertCell().textContent = item.productType || "N/A";
+  
+  // Buy price
+  row.insertCell().textContent = item.buyPrice;
+  
+  // Sell price
+  row.insertCell().textContent = item.sellPrice;
+  
+  // Quantity yasohotse
+  let qty = item.quantity || 1;
+  row.insertCell().textContent = qty;
+  
+  // Profit
+  let profit = item.profit !== undefined ? item.profit : (item.sellPrice - item.buyPrice) * qty;
+  row.insertCell().textContent = profit;
+
+  total += profit;
+});
+
+totalProfitEl.textContent = total;
+</script>
+
+</body>
+</html>

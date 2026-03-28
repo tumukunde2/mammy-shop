@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMMY SHOP| Import</title>
+
+<!-- LOGO IN TITLE -->
+<link rel="icon" href="logo.jpeg" type="image/jpeg">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+/* HEADER WITH IMAGE BACKGROUND */
+header {
+    position: relative;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('logo.jpeg') center/cover no-repeat;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.header-logo {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.header-logo img {
+    height: 255px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+    width: 22%;
+}
+
+#search {
+    width: 95%;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover { background: #0056b3; }
+
+.edit { background: orange; }
+.delete { background: red; }
+.edit:hover, .delete:hover { background: green; }
+
+table {
+    width: 100%;
+    margin-top: 15px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background: #007BFF;
+    color: white;
+}
+
+.total {
+    margin-top: 15px;
+    text-align: right;
+    font-weight: bold;
+}
+
+canvas {
+    margin-top: 30px;
+}
+
+footer {
+    margin-top: 30px;
+    background: linear-gradient(to right, #00c6ff, #007BFF);
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-logo">
+        <img src="logo.jpeg">
+    </div>
+    🛒 MAMMY SHOP
+</header>
+
+<div class="container">
+
+<input type="text" id="name" placeholder="Names">
+<input type="number" id="price" placeholder="Price">
+<input type="number" id="qty" placeholder="Number">
+<input type="date" id="date">
+
+<button onclick="addOrUpdate()">Add products</button>
+
+<br>
+
+<input type="text" id="search" placeholder="🔍 Searching ....." onkeyup="searchProduct()">
+
+<table>
+<thead>
+<tr>
+<th>Names</th>
+<th>Price</th>
+<th>Number</th>
+<th>Total</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<div class="total" id="grandTotal">Total: 0 RWF</div>
+
+<!-- GRAPH -->
+<canvas id="salesChart"></canvas>
+
+</div>
+
+<footer>© 2026 MAMMY SHOP
+        <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</footer>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+let editIndex = -1;
+let chart;
+
+function saveData() {
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+function addOrUpdate() {
+    let name = document.getElementById("name").value;
+    let price = parseFloat(document.getElementById("price").value);
+    let qty = parseInt(document.getElementById("qty").value);
+    let date = document.getElementById("date").value;
+
+    if (!name || !price || !qty || !date) {
+        alert("Uzuza amakuru yose!");
+        return;
+    }
+
+    let total = price * qty;
+
+    if (editIndex === -1) {
+        products.push({ name, price, qty, total, date });
+    } else {
+        products[editIndex] = { name, price, qty, total, date };
+        editIndex = -1;
+    }
+
+    saveData();
+    displayProducts();
+    clearInputs();
+}
+
+function displayProducts(list = products) {
+    let table = document.getElementById("tableBody");
+    table.innerHTML = "";
+
+    let grandTotal = 0;
+    let totalsByDate = {};
+
+    list.forEach((p) => {
+        let index = products.indexOf(p);
+
+        grandTotal += p.total;
+
+        if (!totalsByDate[p.date]) totalsByDate[p.date] = 0;
+        totalsByDate[p.date] += p.total;
+
+        table.innerHTML += `
+        <tr>
+            <td>${p.name}</td>
+            <td>${p.price}</td>
+            <td>${p.qty}</td>
+            <td>${p.total}</td>
+            <td>${p.date}</td>
+            <td>
+                <button class="edit" onclick="editProduct(${index})">Edit</button>
+                <button class="delete" onclick="deleteProduct(${index})">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("grandTotal").innerText = "Total: " + grandTotal + " RWF";
+
+    updateChart(totalsByDate);
+}
+
+function updateChart(data){
+    let labels = Object.keys(data);
+    let values = Object.values(data);
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("salesChart"),{
+        type:"line",
+        data:{
+            labels: labels,
+            datasets:[{
+                label:"Sales per Day",
+                data: values,
+                borderColor:"#007BFF",
+                backgroundColor:"rgba(0,123,255,0.2)",
+                fill:true,
+                tension:0.3
+            }]
+        }
+    });
+}
+
+function searchProduct() {
+    let value = document.getElementById("search").value.toLowerCase();
+
+    let filtered = products.filter(p =>
+        p.name.toLowerCase().includes(value)
+    );
+
+    displayProducts(filtered);
+}
+
+function editProduct(index) {
+    let p = products[index];
+
+    document.getElementById("name").value = p.name;
+    document.getElementById("price").value = p.price;
+    document.getElementById("qty").value = p.qty;
+    document.getElementById("date").value = p.date;
+
+    editIndex = index;
+}
+
+function deleteProduct(index) {
+    if (confirm("Delete?")) {
+        products.splice(index, 1);
+        saveData();
+        displayProducts();
+    }
+}
+
+function clearInputs() {
+    document.getElementById("name").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("qty").value = "";
+    document.getElementById("date").value = "";
+}
+
+displayProducts();
+</script>
+
+</body>
+</html>

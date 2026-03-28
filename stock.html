@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<title>STOCK RUSANGE | MAMMY SHOOP</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:20px;color:#333;}
+header{background:linear-gradient(135deg,#2c3e50,#3498db);color:white;padding:25px;text-align:center;border-radius:10px;margin-bottom:20px;}
+nav{background:white;display:flex;justify-content:center;gap:20px;padding:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);margin-bottom:20px;}
+nav a{text-decoration:none;color:#2c3e50;font-weight:bold;padding:8px 18px;border-radius:20px;transition:0.3s;}
+nav a:hover{background:#3498db;color:white;}
+table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.1);margin-bottom:25px;}
+thead{background:#1abc9c;color:white;}
+th,td{padding:12px;text-align:center;font-size:14px;}
+tbody tr:nth-child(odd){background:#ecf0f1;}
+tbody tr:nth-child(even){background:#bdc3c7;}
+tbody tr:hover{background:#3498db;color:white;cursor:pointer;}
+button.deleteBtn{background:#e74c3c;color:white;padding:5px 12px;border:none;border-radius:5px;cursor:pointer;}
+.total{margin-top:20px;background:#27ae60;color:white;padding:15px;border-radius:10px;text-align:center;font-size:18px;font-weight:bold;}
+footer{margin-top:30px;text-align:center;font-size:13px;}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>MAMMY SHOOP</h1>
+  <p>STOCK RUSANGE Y’IBICURUZWA BYOSE (AUTOMATIC)</p>
+</header>
+
+<nav>
+    <a href="index.html">Ahabanza</a>
+    <a href="ibicuruzwa.html">Ibicuruzwa</a>
+    <a href="abo turi bo.html">Abo turi bo</a>
+    <a href="stock.html">Stock</a>
+    <a href="inyungu.html">Inyungu</a>
+    <a href="user.html">User</a>
+    <a href="searching.html">Searching</a>
+</nav>
+
+<table>
+<thead>
+<tr>
+  <th>Igicuruzwa</th>
+  <th>Ubwoko bw'Igicuruzwa</th>
+  <th>Stock Isigaye</th>
+  <th>GUSIBA</th>
+</tr>
+</thead>
+<tbody id="stockBody"></tbody>
+</table>
+
+<div class="total" id="grandTotal">TOTAL STOCK YOSE: 0</div>
+
+<footer>
+  <p>&copy; 2026 MAMMY SHOOP</p>
+      <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+</footer>
+
+<script>
+const products = [
+  {name:"AMATA", key:"amataData", link:"amata.html"},
+  {name:"AMAVUTA", key:"amavutaData", link:"amavuta.html"},
+  {name:"AMAZI", key:"amaziData", link:"amazi.html"},
+  {name:"FANTA", key:"fantaData", link:"fanta.html"},
+  {name:"BISWI", key:"biswiData", link:"biswi.html"},
+  {name:"IFARINI", key:"ifariniData", link:"ifarini.html"},
+  {name:"IFU Y'IBIGORI", key:"ibigoriData", link:"ibigori.html"},
+  {name:"IGIKOMA", key:"igikomaData", link:"igikoma.html"},
+  {name:"ISABUNE", key:"isabuneData", link:"isabune.html"},
+  {name:"ISUKARI", key:"isukariData", link:"isukari.html"},
+  {name:"JUICE", key:"juiceData", link:"juice.html"},
+  {name:"KWISIGA", key:"kwisigaData", link:"kwisiga.html"},
+  {name:"MAYONEZE", key:"mayonezeData", link:"mayoneze.html"},
+  {name:"NIDO", key:"nidoData", link:"nido.html"},
+  {name:"OMO", key:"omoData", link:"omo.html"},
+  {name:"PAPA", key:"papaData", link:"papa.html"},
+  {name:"PARUFE", key:"parufeData", link:"parufe.html"},
+  {name:"PH", key:"phData", link:"ph.html"},
+  {name:"QUAKER", key:"quakerData", link:"quaker.html"},
+  {name:"UMUCERI", key:"umuceriData", link:"umuceri.html"}
+];
+
+let stockBody = document.getElementById("stockBody");
+let grandTotal = 0;
+
+function getStock(storageKey){
+  let data = JSON.parse(localStorage.getItem(storageKey)) || [];
+  let stockList = [];
+  data.forEach((row,index)=>{
+    let type = row[1] || "Nta bwoko";
+    let stock = Number(row[11]) || 0;
+    stockList.push({type,stock,index});
+  });
+  return stockList;
+}
+
+function renderStock(){
+  stockBody.innerHTML = "";
+  grandTotal = 0;
+
+  products.forEach(p=>{
+    let stockList = getStock(p.key);
+    stockList.forEach(obj=>{
+      grandTotal += obj.stock;
+
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${p.name}</td>
+        <td>${obj.type}</td>
+        <td>${obj.stock}</td>
+        <td><button class="deleteBtn">SIBA</button></td>
+      `;
+
+      // Click kuri row yose: link
+      tr.onclick = () => {
+        window.location.href = p.link;
+      };
+
+      // Button SIBA: stopPropagation + isiba muri localStorage
+      tr.querySelector(".deleteBtn").onclick = (e)=>{
+        e.stopPropagation();
+        let data = JSON.parse(localStorage.getItem(p.key)) || [];
+        data.splice(obj.index,1);
+        localStorage.setItem(p.key, JSON.stringify(data));
+        renderStock();
+      };
+
+      stockBody.appendChild(tr);
+    });
+  });
+
+  document.getElementById("grandTotal").textContent =
+    "TOTAL STOCK YOSE: " + grandTotal;
+}
+
+renderStock();
+</script>
+
+</body>
+</html>

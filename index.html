@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MAMMY SHOP | Products</title>
+
+<link rel="icon" href="logo.jpeg" type="image/jpeg">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('logo.jpeg') center/cover no-repeat;
+  color:white;
+  padding:20px;
+  text-align:center;
+}
+
+.header-logo{
+  position:absolute;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.header-logo img{
+  height:90px;
+  border-radius:50%;
+  border:2px solid white;
+}
+
+/* SEARCH */
+.search-box{
+  margin:15px;
+  text-align:center;
+}
+
+.search-box input{
+  width:300px;
+  padding:10px;
+  border-radius:25px;
+  border:1px solid #ccc;
+  outline:none;
+}
+
+/* NAVIGATION */
+nav{
+  position:sticky;
+  top:100px;
+  z-index:999;
+  background:white;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  padding:10px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+  overflow-x:auto;
+}
+
+/* NAV ITEM */
+nav a{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#2c3e50;
+  font-size:12px;
+  font-weight:bold;
+  padding:8px 10px;
+  border-radius:10px;
+  min-width:70px;
+  transition:0.3s;
+}
+
+nav a span{
+  font-size:20px;
+  margin-bottom:3px;
+}
+
+/* HOVER */
+nav a:hover{
+  background:#3498db;
+  color:white;
+}
+
+/* ACTIVE */
+nav a.active{
+  background:#3498db;
+  color:white;
+}
+
+/* PRODUCTS */
+.products{
+  padding:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+}
+
+.product{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  width:200px;
+  height:260px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.product img{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.product h3{
+  margin:10px 0;
+}
+
+.product a{
+  display:inline-block;
+  padding:6px 12px;
+  background:#9b59b6;
+  color:white;
+  border-radius:20px;
+  text-decoration:none;
+}
+
+.product a:hover{
+  background:#4b2c50;
+}
+
+/* FOOTER */
+footer{
+  margin-top:20px;
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-logo">
+        <img src="logo.jpeg">
+    </div>
+    <h1>MAMMY SHOP</h1>
+    <p>We sell food, drinks, hygiene products and more.</p>
+</header>
+
+<!-- SEARCH -->
+<div class="search-box">
+    <input type="text" id="search" placeholder="🔍 Search product...">
+</div>
+
+<!-- NAV WITH ICONS + NAMES -->
+<nav>
+    <a href="dashboad.html"><span>🏠</span>Home</a>
+    <a href="ibicuruzwa.html"><span>📦</span>Products</a>
+    <a href="kurangura.html"><span>🚚</span>Import</a>
+    <a href="Reporting.html"><span>📊</span>Report</a>
+    <a href="debit.html"><span>💳</span>Debits</a>
+    <a href="abo turi bo.html"><span>👥</span>About</a>
+    <a href="stock.html"><span>📋</span>Stock</a>
+    <a href="inyungu.html"><span>💰</span>Profit</a>
+    <a href="user.html"><span>👤</span>User</a>
+</nav>
+
+<section class="products" id="products"></section>
+
+<footer>
+    <p>Location: Kigali, Kanombe</p> 
+    <p>Phone: 0788440073</p>
+    <p>Pay Code: 705257</p>
+    <p>&copy; 2026 MAMMY SHOP</p>
+    <p>&curvearrowright;Ni Ka Boos</p>
+</footer>
+
+<script>
+/* ACTIVE LINK */
+const links = document.querySelectorAll("nav a");
+const currentPage = window.location.pathname.split("/").pop();
+
+links.forEach(link=>{
+    if(link.getAttribute("href") === currentPage){
+        link.classList.add("active");
+    }
+});
+
+/* PRODUCTS */
+const allProducts = [
+    {name:"Water", type:"Water", link:"amazi.html", img:"images/amazi.jpeg"},
+    {name:"Cooking Oil", type:"Oil", link:"amavuta.html", img:"images/amavuta.jpeg"},
+    {name:"Body Lotion", type:"Cosmetics", link:"kwisiga.html", img:"images/kwisiga.jpeg"},
+    {name:"Milk", type:"Milk", link:"amata.html", img:"images/amata.jpeg"},
+    {name:"Biscuits", type:"Biscuits", link:"biswi.html", img:"images/biswi.jpeg"},
+    {name:"Fanta", type:"Drink", link:"fanta.html", img:"images/fanta.jpeg"},
+    {name:"Flour", type:"Flour", link:"ifarini.html", img:"images/ifarini.jpeg"},
+    {name:"Maize Flour", type:"Flour", link:"ifu y ibigori.html", img:"images/ifu y ibigori.jpeg"},
+    {name:"Porridge Flour", type:"Flour", link:"igikoma.html", img:"images/toha.jpeg"},
+    {name:"Soap", type:"Soap", link:"isabune.html", img:"images/isabune.jpeg"},
+    {name:"Juice", type:"Drink", link:"juice.html", img:"images/juice.webp"},
+    {name:"Mayonnaise", type:"Food", link:"mayoneze.html", img:"images/mayoneze.jpeg"},
+    {name:"Nido Milk", type:"Milk", link:"nido.html", img:"images/nido.jpeg"},
+    {name:"Omo Powder", type:"Soap", link:"omo.html", img:"images/omo.jpeg"},
+    {name:"Diapers", type:"Baby", link:"papa.html", img:"images/pp.jpeg"},
+    {name:"Perfume", type:"Cosmetics", link:"parufe.html", img:"images/parufe.jpeg"},
+    {name:"Toilet Paper", type:"Hygiene", link:"ph.html", img:"images/ph.jpeg"},
+    {name:"Quaker Oats", type:"Food", link:"quaker.html", img:"images/quaker.jpeg"},
+    {name:"Sugar", type:"Food", link:"isukari.html", img:"images/isukari.jpeg"},
+    {name:"Rice", type:"Food", link:"umuceri.html", img:"images/umuceri.jpeg"}
+];
+
+const container = document.getElementById("products");
+const searchInput = document.getElementById("search");
+
+function displayProducts(list){
+    container.innerHTML = "";
+    list.forEach(p=>{
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <a href="${p.link}">Open</a>
+        `;
+        container.appendChild(div);
+    });
+}
+
+displayProducts(allProducts);
+
+/* SEARCH */
+searchInput.addEventListener("keyup", ()=>{
+    const value = searchInput.value.toLowerCase();
+    const filtered = allProducts.filter(p =>
+        p.name.toLowerCase().includes(value) ||
+        p.type.toLowerCase().includes(value)
+    );
+    displayProducts(filtered);
+});
+</script>
+
+</body>
+</html>

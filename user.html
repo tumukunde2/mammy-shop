@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<title>ADMIN ORDER | MAMMY SHOP</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;color:#333;}
+header{background:linear-gradient(135deg,#2c3e50,#3498db);color:white;padding:25px;text-align:center;border-radius:10px;margin-bottom:20px;}
+form{background:white;padding:20px;border-radius:10px;margin-bottom:25px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+form input, form select{padding:8px;margin:5px 0;width:100%;border-radius:5px;border:1px solid #ccc;}
+form button{padding:10px 20px;border:none;border-radius:25px;background:#3498db;color:white;font-weight:bold;cursor:pointer;margin-top:10px;}
+table{width:100%;border-collapse:collapse;background:white;border-radius:10px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
+thead{background:#2c3e50;color:white;}
+th,td{padding:12px;text-align:center;}
+tbody tr:nth-child(even){background:#f9f9f9;}
+tbody tr:hover{background:#eef5ff;}
+.back{display:inline-block;margin-bottom:15px;text-decoration:none;background:#2c3e50;color:white;padding:8px 18px;border-radius:20px;}
+.deleteBtn{padding:5px 10px;border:none;border-radius:5px;background:red;color:white;cursor:pointer;}
+nav{background:white;display:flex;justify-content:center;gap:20px;padding:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+nav a{text-decoration:none;color:#2c3e50;font-weight:bold;padding:8px 18px;border-radius:20px;}
+nav a:hover{background:#3498db;color:white;}
+</style>
+</head>
+<body>
+
+<a href="stock.html" class="back">← Jya kuri Stock</a>
+
+<header>
+<h1>MAMMY SHOP</h1>
+<p>Admin Dashboard - Orders + Automatic Stock</p>
+</header>
+
+<nav>
+<a href="index.html">Ahabanza</a>
+<a href="ibicuruzwa.html">Ibicuruzwa</a>
+<a href="stock.html">Stock</a>
+<a href="inyungu.html">Inyungu</a>
+<a href="user.html">User</a>
+<a href="searching.html">Searching</a>
+</nav>
+
+<form id="orderForm">
+<input type="text" id="userName" placeholder="Amazina y'Umukiriya" required>
+
+<select id="productSelect" required>
+<option value="">Hitamo Igicuruzwa</option>
+</select>
+
+<select id="productType" required>
+<option value="">Hitamo Ubwoko</option>
+</select>
+
+<select id="quantity" required>
+<option value="">Hitamo Ingano</option>
+</select>
+
+<!-- IGICIRO NK'OPTION -->
+<select id="price" required>
+<option value="">Hitamo Igiciro</option>
+</select>
+
+<input type="text" id="phone" value="+2507" required>
+<input type="date" id="date" required>
+
+<button type="submit">Ohereza Order</button>
+</form>
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>Amazina</th>
+<th>Igicuruzwa</th>
+<th>Ubwoko</th>
+<th>Ingano</th>
+<th>Igiciro</th>
+<th>Telephone</th>
+<th>Itariki</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="orderBody"></tbody>
+</table>
+    <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+<script>
+const productSelect = document.getElementById("productSelect");
+const productType = document.getElementById("productType");
+const quantitySelect = document.getElementById("quantity");
+const priceSelect = document.getElementById("price");
+const orderBody = document.getElementById("orderBody");
+
+// Load products
+function loadProducts(){
+  for(let key in localStorage){
+    if(key.endsWith("Data")){
+      let opt=document.createElement("option");
+      opt.value=key;
+      opt.textContent=key.replace("Data","");
+      productSelect.appendChild(opt);
+    }
+  }
+}
+loadProducts();
+
+// Load product types
+productSelect.addEventListener("change",()=>{
+  productType.innerHTML="<option value=''>Hitamo Ubwoko</option>";
+  quantitySelect.innerHTML="<option value=''>Hitamo Ingano</option>";
+  priceSelect.innerHTML="<option value=''>Hitamo Igiciro</option>";
+
+  let data=JSON.parse(localStorage.getItem(productSelect.value))||[];
+  [...new Set(data.map(r=>r[1]))].forEach(t=>{
+    let o=document.createElement("option");
+    o.value=t;
+    o.textContent=t;
+    productType.appendChild(o);
+  });
+});
+
+// Load quantity + price from stock
+productType.addEventListener("change",()=>{
+  quantitySelect.innerHTML="<option value=''>Hitamo Ingano</option>";
+  priceSelect.innerHTML="<option value=''>Hitamo Igiciro</option>";
+
+  let data=JSON.parse(localStorage.getItem(productSelect.value))||[];
+  let row=data.find(r=>r[1]===productType.value);
+  if(!row) return;
+
+  let stock=Number(row[11])||0;
+  let price=Number(row[5])||0;
+
+  // quantity options
+  for(let i=1;i<=stock;i++){
+    let o=document.createElement("option");
+    o.value=i;
+    o.textContent=i;
+    quantitySelect.appendChild(o);
+  }
+
+  // price option
+  let p=document.createElement("option");
+  p.value=price;
+  p.textContent=price+" RWF";
+  priceSelect.appendChild(p);
+});
+
+// Load orders
+function loadOrders(){
+  let orders=JSON.parse(localStorage.getItem("adminOrders"))||[];
+  orderBody.innerHTML="";
+  orders.forEach((o,i)=>{
+    orderBody.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${o.name}</td>
+      <td>${o.product.replace("Data","")}</td>
+      <td>${o.type}</td>
+      <td>${o.quantity}</td>
+      <td>${o.price}</td>
+      <td>${o.phone}</td>
+      <td>${o.date}</td>
+      <td><button class="deleteBtn" onclick="deleteOrder(${i})">Siba</button></td>
+    </tr>`;
+  });
+}
+loadOrders();
+
+function deleteOrder(i){
+  let orders=JSON.parse(localStorage.getItem("adminOrders"))||[];
+  orders.splice(i,1);
+  localStorage.setItem("adminOrders",JSON.stringify(orders));
+  loadOrders();
+}
+
+// Submit order
+document.getElementById("orderForm").addEventListener("submit",e=>{
+  e.preventDefault();
+
+  let orders=JSON.parse(localStorage.getItem("adminOrders"))||[];
+  orders.push({
+    name:userName.value,
+    product:productSelect.value,
+    type:productType.value,
+    quantity:Number(quantitySelect.value),
+    price:Number(priceSelect.value),
+    phone:phone.value,
+    date:date.value
+  });
+  localStorage.setItem("adminOrders",JSON.stringify(orders));
+
+  let data=JSON.parse(localStorage.getItem(productSelect.value));
+  let row=data.find(r=>r[1]===productType.value);
+  row[11]-=Number(quantitySelect.value);
+  localStorage.setItem(productSelect.value,JSON.stringify(data));
+
+  loadOrders();
+  e.target.reset();
+  phone.value="+2507";
+});
+</script>
+
+</body>
+</html>
