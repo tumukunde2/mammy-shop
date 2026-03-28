@@ -1,84 +1,331 @@
 <!DOCTYPE html>
-<html lang="rw">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ibicuruzwa | MAMMY SHOP</title>
+<title>MAMMY SHOP | Products</title>
+
+<link rel="icon" href="logo.jpeg" type="image/jpeg">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;color:#333;}
-header{background:linear-gradient(135deg,#2c3e50,#3498db);color:white;padding:30px 20px;text-align:center;}
-nav{background:white;display:flex;justify-content:center;gap:20px;padding:15px;box-shadow:0 3px 10px rgba(0,0,0,0.1);}
-nav a{text-decoration:none;color:#2c3e50;font-weight:bold;padding:8px 18px;border-radius:20px;transition:0.3s;}
-nav a:hover{background:#3498db;color:white;}
-.products{padding:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;}
-.product{background:white;border-radius:15px;box-shadow:0 6px 15px rgba(0,0,0,0.12);padding:15px;text-align:center;transition:0.3s;}
-.product:hover{transform:translateY(-6px);}
-.product img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:10px;}
-.product h3{color:#2c3e50;margin-bottom:5px;}
-.product p{font-size:14px;color:#555;margin-bottom:12px;}
-.product a{display:block;width:100%;text-decoration:none;background:linear-gradient(135deg,#3498db,#2ecc71);color:white;padding:10px 0;border-radius:30px;font-weight:bold;transition:0.3s;}
-.product a:hover{background:linear-gradient(135deg,#2ecc71,#3498db);transform:scale(1.05);}
-footer{background:#2c3e50;color:white;padding:25px;text-align:center;}
-@media(max-width:768px){nav{flex-direction:column;}}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('logo.jpeg') center/cover no-repeat;
+  color:white;
+  padding:20px;
+  text-align:center;
+}
+
+.header-logo{
+  position:absolute;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.header-logo img{
+  height:90px;
+  border-radius:50%;
+  border:2px solid white;
+}
+
+/* SEARCH */
+.search-box{
+  margin:15px;
+  text-align:center;
+}
+
+.search-box input{
+  width:300px;
+  padding:10px;
+  border-radius:25px;
+  border:1px solid #ccc;
+}
+
+/* NAV */
+nav{
+  position:sticky;
+  top:100px;
+  z-index:999;
+  background:white;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  padding:10px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+  overflow-x:auto;
+}
+
+nav a{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:#2c3e50;
+  font-size:12px;
+  font-weight:bold;
+  padding:8px;
+  border-radius:10px;
+  min-width:70px;
+}
+
+nav a span{font-size:20px;}
+
+nav a:hover, nav a.active{
+  background:#3498db;
+  color:white;
+}
+
+/* PRODUCTS */
+.products{
+  padding:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+}
+
+.product{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  width:200px;
+  height:280px;
+  text-align:center;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.product img{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.product h3{margin:10px 0;}
+
+.product a, .product button{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:20px;
+  text-decoration:none;
+  border:none;
+  cursor:pointer;
+}
+
+.open-btn{background:#9b59b6;color:white;}
+.order-btn{background:#25D366;color:white;margin-top:5px;}
+
+footer{
+  margin-top:20px;
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+}
+
+/* MODAL */
+#orderModal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+
+.modal-box{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+  text-align:center;
+}
+
+.modal-box input{
+  width:100%;
+  padding:8px;
+  margin:8px 0;
+}
+
+.send-btn{
+  background:#25D366;
+  color:white;
+  padding:8px 15px;
+  border:none;
+}
+
+.close-btn{
+  background:red;
+  color:white;
+  padding:5px 10px;
+  border:none;
+  margin-top:10px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>MAMMY SHOP</h1>
-<p>Icuruzwa ry'ibicuruzwa bitandukanye</p>
+  <div class="header-logo">
+    <img src="logo.jpeg">
+  </div>
+  <h1>MAMMY SHOP</h1>
+  <p>We sell food, drinks, hygiene products and more.</p>
 </header>
 
+<div class="search-box">
+  <input type="text" id="search" placeholder="🔍 Search product...">
+</div>
+
 <nav>
-<a href="index.html">Ahabanza</a>
-<a href="ibicuruzwa.html">Ibicuruzwa</a>
-<a href="abo turi bo.html">Abo turi bo</a>
-<a href="stock.html">Stock</a>
-<a href="inyungu.html">Inyungu</a>
-<a href="user.html">User</a>
-<a href="searching.html">Searching</a>
+  <a href="dashboad.html"><span>🏠</span>Home</a>
+  <a href="ibicuruzwa.html"><span>📦</span>Products</a>
+  <a href="kurangura.html"><span>🚚</span>Import</a>
+  <a href="Reporting.html"><span>📊</span>Report</a>
+  <a href="debit.html"><span>💳</span>Debits</a>
+  <a href="abo turi bo.html"><span>👥</span>About</a>
+  <a href="stock.html"><span>📋</span>Stock</a>
+  <a href="inyungu.html"><span>💰</span>Profit</a>
+  <a href="user.html"><span>👤</span>User</a>
 </nav>
 
-<section class="products">
+<section class="products" id="products"></section>
 
-<div class="product">
-    <img src="images/amata.jpeg">
-    <h3>Amata</h3><p>Amoko yose</p>
-    <a href="amata.html">INJIZA</a></div>
-<div class="product">
-<img src="images/amazi.jpeg">
-<h3>Amazi</h3><p>Amoko yose</p>
-<a href="amazi.html">INJIZA</a></div>
-<div class="product">
-<img src="images/amavuta.jpeg">
-<h3>Amavuta</h3><p>Amoko yose</p>
-<a href="amavuta.html">INJIZA</a></div>
-<div class="product"><img src="images/kwisiga.jpeg"><h3>Amavuta yo kwisiga</h3><p>Amoko yose</p><a href="kwisiga.html">INJIZA</a></div>
-<div class="product"><img src="images/biswi.jpeg"><h3>Biswi</h3><p>Amoko yose</p><a href="biswi.html">INJIZA</a></div>
-<div class="product"><img src="images/fanta.jpeg"><h3>Fanta</h3><p>Amoko yose</p><a href="fanta.html">INJIZA</a></div>
-<div class="product"><img src="images/ifarini.jpeg"><h3>Ifarini</h3><p>Amoko yose</p><a href="ifarini.html">INJIZA</a></div>
-<div class="product"><img src="images/ifu y ibigori.jpeg"><h3>Ifu y'ibigori</h3><p>Amoko yose</p><a href="ifu y'ibigori.html">INJIZA</a></div>
-<div class="product"><img src="images/toha.jpeg"><h3>Ifu y'igikoma</h3><p>Amoko yose</p><a href="igikoma.html">INJIZA</a></div>
-<div class="product"><img src="images/isabune.jpeg"><h3>Isabune</h3><p>Amoko yose</p><a href="isabune.html">INJIZA</a></div>
-<div class="product"><img src="images/isukari.jpeg"><h3>Isukari</h3><p>Amoko yose</p><a href="isukari.html">INJIZA</a></div>
-<div class="product"><img src="images/juice.webp"><h3>Juice</h3><p>Amoko yose</p><a href="juice.html">INJIZA</a></div>
-<div class="product"><img src="images/mayoneze.jpeg"><h3>Mayoneze</h3><p>Amoko yose</p><a href="mayoneze.html">INJIZA</a></div>
-<div class="product"><img src="images/nido.jpeg"><h3>Nido</h3><p>Amoko yose</p><a href="nido.html">INJIZA</a></div>
-<div class="product"><img src="images/omo.jpeg"><h3>Omo</h3><p>Amoko yose</p><a href="omo.html">INJIZA</a></div>
-<div class="product"><img src="images/pp.jpeg"><h3>Papa</h3><p>Amoko yose</p><a href="papa.html">INJIZA</a></div>
-<div class="product"><img src="images/parufe.jpeg"><h3>Parufe</h3><p>Amoko yose</p><a href="parufe.html">INJIZA</a></div>
-<div class="product"><img src="images/ph.jpeg"><h3>Ph</h3><p>Amoko yose</p><a href="ph.html">INJIZA</a></div>
-<div class="product"><img src="images/quaker.jpeg"><h3>Quaker</h3><p>Amoko yose</p><a href="quaker.html">INJIZA</a></div>
-<div class="product"><img src="images/umuceri.jpeg"><h3>Umuceri</h3><p>Amoko yose</p><a href="umuceri.html">INJIZA</a></div>
+<!-- ORDER FORM -->
+<div id="orderModal">
+  <div class="modal-box">
+    <h3 id="productName"></h3>
 
-</section>
+    <input type="text" id="custName" placeholder="Your Name">
+    <input type="text" id="custPhone" placeholder="Your Phone">
+    <input type="number" id="quantity" placeholder="Quantity">
+
+    <button class="send-btn" onclick="sendOrder()">Ohereza</button>
+    <br>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
 
 <footer>
-<p>&copy; 2026 MAMMY SHOP</p>
-    <p>&curvearrowright; Created : Ni Ka Boos LTD</p>
+  <p>Location: Kigali, Kanombe</p>
+  <p>Phone: 0788440073</p>
+  <p>Pay Code: 705257</p>
+  <p>&copy; 2026 MAMMY SHOP</p>
 </footer>
+
+<script>
+const phone = "250739489188";
+let selectedProduct = "";
+
+/* ACTIVE LINK */
+const links = document.querySelectorAll("nav a");
+const currentPage = window.location.pathname.split("/").pop();
+links.forEach(link=>{
+  if(link.getAttribute("href") === currentPage){
+    link.classList.add("active");
+  }
+});
+
+/* PRODUCTS */
+const allProducts = [
+{name:"Water", type:"Water", link:"amazi.html", img:"amazi.jpeg"},
+{name:"Cooking Oil", type:"Oil", link:"amavuta.html", img:"amavuta.jpeg"},
+{name:"Body Lotion", type:"Cosmetics", link:"kwisiga.html", img:"kwisiga.jpeg"},
+{name:"Milk", type:"Milk", link:"amata.html", img:"amata.jpeg"},
+{name:"Biscuits", type:"Biscuits", link:"biswi.html", img:"biswi.jpeg"},
+{name:"Fanta", type:"Drink", link:"fanta.html", img:"fanta.jpeg"},
+{name:"Flour", type:"Flour", link:"ifarini.html", img:"ifarini.jpeg"},
+{name:"Maize Flour", type:"Flour", link:"ifu y ibigori.html", img:"ifu y ibigori.jpeg"},
+{name:"Porridge Flour", type:"Flour", link:"igikoma.html", img:"toha.jpeg"},
+{name:"Soap", type:"Soap", link:"isabune.html", img:"isabune.jpeg"},
+{name:"Juice", type:"Drink", link:"juice.html", img:"juice.webp"},
+{name:"Mayonnaise", type:"Food", link:"mayoneze.html", img:"mayoneze.jpeg"},
+{name:"Nido Milk", type:"Milk", link:"nido.html", img:"nido.jpeg"},
+{name:"Omo Powder", type:"Soap", link:"omo.html", img:"omo.jpeg"},
+{name:"Diapers", type:"Baby", link:"papa.html", img:"pp.jpeg"},
+{name:"Perfume", type:"Cosmetics", link:"parufe.html", img:"parufe.jpeg"},
+{name:"Toilet Paper", type:"Hygiene", link:"ph.html", img:"ph.jpeg"},
+{name:"Quaker Oats", type:"Food", link:"quaker.html", img:"quaker.jpeg"},
+{name:"Sugar", type:"Food", link:"isukari.html", img:"isukari.jpeg"},
+{name:"Rice", type:"Food", link:"umuceri.html", img:"umuceri.jpeg"}
+];
+
+const container = document.getElementById("products");
+const searchInput = document.getElementById("search");
+
+/* DISPLAY */
+function displayProducts(list){
+  container.innerHTML = "";
+  list.forEach(p=>{
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <img src="${p.img}">
+      <h3>${p.name}</h3>
+      <a class="open-btn" href="${p.link}">Open</a><br>
+      <button class="order-btn" onclick="openModal('${p.name}')">TUMIZA</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+displayProducts(allProducts);
+
+/* SEARCH */
+searchInput.addEventListener("keyup", ()=>{
+  const value = searchInput.value.toLowerCase();
+  const filtered = allProducts.filter(p =>
+    p.name.toLowerCase().includes(value) ||
+    p.type.toLowerCase().includes(value)
+  );
+  displayProducts(filtered);
+});
+
+/* MODAL */
+function openModal(product){
+  selectedProduct = product;
+  document.getElementById("productName").innerText = product;
+  document.getElementById("orderModal").style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("orderModal").style.display = "none";
+}
+
+/* SEND TO WHATSAPP */
+function sendOrder(){
+  const name = document.getElementById("custName").value;
+  const phoneUser = document.getElementById("custPhone").value;
+  const qty = document.getElementById("quantity").value;
+
+  if(!name || !phoneUser || !qty){
+    alert("Uzuza ibisabwa byose!");
+    return;
+  }
+
+  const message = `Muraho MAMMY SHOP:
+Izina: ${name}
+Telefoni: ${phoneUser}
+Product: ${selectedProduct}
+Quantity: ${qty}`;
+
+  const link = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(link, "_blank");
+}
+</script>
 
 </body>
 </html>

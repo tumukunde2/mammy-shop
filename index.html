@@ -7,11 +7,7 @@
 <link rel="icon" href="logo.jpeg" type="image/jpeg">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
   font-family:Arial, Helvetica, sans-serif;
@@ -54,10 +50,9 @@ header{
   padding:10px;
   border-radius:25px;
   border:1px solid #ccc;
-  outline:none;
 }
 
-/* NAVIGATION */
+/* NAV */
 nav{
   position:sticky;
   top:100px;
@@ -71,35 +66,22 @@ nav{
   overflow-x:auto;
 }
 
-/* NAV ITEM */
 nav a{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   text-decoration:none;
   color:#2c3e50;
   font-size:12px;
   font-weight:bold;
-  padding:8px 10px;
+  padding:8px;
   border-radius:10px;
   min-width:70px;
-  transition:0.3s;
 }
 
-nav a span{
-  font-size:20px;
-  margin-bottom:3px;
-}
+nav a span{font-size:20px;}
 
-/* HOVER */
-nav a:hover{
-  background:#3498db;
-  color:white;
-}
-
-/* ACTIVE */
-nav a.active{
+nav a:hover, nav a.active{
   background:#3498db;
   color:white;
 }
@@ -118,7 +100,7 @@ nav a.active{
   padding:15px;
   border-radius:10px;
   width:200px;
-  height:260px;
+  height:280px;
   text-align:center;
   box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
@@ -130,29 +112,66 @@ nav a.active{
   border-radius:10px;
 }
 
-.product h3{
-  margin:10px 0;
-}
+.product h3{margin:10px 0;}
 
-.product a{
+.product a, .product button{
   display:inline-block;
   padding:6px 12px;
-  background:#9b59b6;
-  color:white;
   border-radius:20px;
   text-decoration:none;
+  border:none;
+  cursor:pointer;
 }
 
-.product a:hover{
-  background:#4b2c50;
-}
+.open-btn{background:#9b59b6;color:white;}
+.order-btn{background:#25D366;color:white;margin-top:5px;}
 
-/* FOOTER */
 footer{
   margin-top:20px;
   text-align:center;
   padding:20px;
   font-size:13px;
+}
+
+/* MODAL */
+#orderModal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+
+.modal-box{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+  text-align:center;
+}
+
+.modal-box input{
+  width:100%;
+  padding:8px;
+  margin:8px 0;
+}
+
+.send-btn{
+  background:#25D366;
+  color:white;
+  padding:8px 15px;
+  border:none;
+}
+
+.close-btn{
+  background:red;
+  color:white;
+  padding:5px 10px;
+  border:none;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -160,104 +179,152 @@ footer{
 <body>
 
 <header>
-    <div class="header-logo">
-        <img src="logo.jpeg">
-    </div>
-    <h1>MAMMY SHOP</h1>
-    <p>We sell food, drinks, hygiene products and more.</p>
+  <div class="header-logo">
+    <img src="logo.jpeg">
+  </div>
+  <h1>MAMMY SHOP</h1>
+  <p>We sell food, drinks, hygiene products and more.</p>
 </header>
 
-<!-- SEARCH -->
 <div class="search-box">
-    <input type="text" id="search" placeholder="🔍 Search product...">
+  <input type="text" id="search" placeholder="🔍 Search product...">
 </div>
 
-<!-- NAV WITH ICONS + NAMES -->
 <nav>
-    <a href="dashboad.html"><span>🏠</span>Home</a>
-    <a href="ibicuruzwa.html"><span>📦</span>Products</a>
-    <a href="kurangura.html"><span>🚚</span>Import</a>
-    <a href="Reporting.html"><span>📊</span>Report</a>
-    <a href="debit.html"><span>💳</span>Debits</a>
-    <a href="abo turi bo.html"><span>👥</span>About</a>
-    <a href="stock.html"><span>📋</span>Stock</a>
-    <a href="inyungu.html"><span>💰</span>Profit</a>
-    <a href="user.html"><span>👤</span>User</a>
+  <a href="dashboad.html"><span>🏠</span>Home</a>
+  <a href="ibicuruzwa.html"><span>📦</span>Products</a>
+  <a href="kurangura.html"><span>🚚</span>Import</a>
+  <a href="Reporting.html"><span>📊</span>Report</a>
+  <a href="debit.html"><span>💳</span>Debits</a>
+  <a href="abo turi bo.html"><span>👥</span>About</a>
+  <a href="stock.html"><span>📋</span>Stock</a>
+  <a href="inyungu.html"><span>💰</span>Profit</a>
+  <a href="user.html"><span>👤</span>User</a>
 </nav>
 
 <section class="products" id="products"></section>
 
+<!-- ORDER FORM -->
+<div id="orderModal">
+  <div class="modal-box">
+    <h3 id="productName"></h3>
+
+    <input type="text" id="custName" placeholder="Your Name">
+    <input type="text" id="custPhone" placeholder="Your Phone">
+    <input type="number" id="quantity" placeholder="Quantity">
+
+    <button class="send-btn" onclick="sendOrder()">Ohereza</button>
+    <br>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
 <footer>
-    <p>Location: Kigali, Kanombe</p> 
-    <p>Phone: 0788440073</p>
-    <p>Pay Code: 705257</p>
-    <p>&copy; 2026 MAMMY SHOP</p>
-    <p>&curvearrowright;Ni Ka Boos</p>
+  <p>Location: Kigali, Kanombe</p>
+  <p>Phone: 0788440073</p>
+  <p>Pay Code: 705257</p>
+  <p>&copy; 2026 MAMMY SHOP</p>
 </footer>
 
 <script>
+const phone = "250739489188";
+let selectedProduct = "";
+
 /* ACTIVE LINK */
 const links = document.querySelectorAll("nav a");
 const currentPage = window.location.pathname.split("/").pop();
-
 links.forEach(link=>{
-    if(link.getAttribute("href") === currentPage){
-        link.classList.add("active");
-    }
+  if(link.getAttribute("href") === currentPage){
+    link.classList.add("active");
+  }
 });
 
 /* PRODUCTS */
 const allProducts = [
-    {name:"Water", type:"Water", link:"amazi.html", img:"images/amazi.jpeg"},
-    {name:"Cooking Oil", type:"Oil", link:"amavuta.html", img:"images/amavuta.jpeg"},
-    {name:"Body Lotion", type:"Cosmetics", link:"kwisiga.html", img:"images/kwisiga.jpeg"},
-    {name:"Milk", type:"Milk", link:"amata.html", img:"images/amata.jpeg"},
-    {name:"Biscuits", type:"Biscuits", link:"biswi.html", img:"images/biswi.jpeg"},
-    {name:"Fanta", type:"Drink", link:"fanta.html", img:"images/fanta.jpeg"},
-    {name:"Flour", type:"Flour", link:"ifarini.html", img:"images/ifarini.jpeg"},
-    {name:"Maize Flour", type:"Flour", link:"ifu y ibigori.html", img:"images/ifu y ibigori.jpeg"},
-    {name:"Porridge Flour", type:"Flour", link:"igikoma.html", img:"images/toha.jpeg"},
-    {name:"Soap", type:"Soap", link:"isabune.html", img:"images/isabune.jpeg"},
-    {name:"Juice", type:"Drink", link:"juice.html", img:"images/juice.webp"},
-    {name:"Mayonnaise", type:"Food", link:"mayoneze.html", img:"images/mayoneze.jpeg"},
-    {name:"Nido Milk", type:"Milk", link:"nido.html", img:"images/nido.jpeg"},
-    {name:"Omo Powder", type:"Soap", link:"omo.html", img:"images/omo.jpeg"},
-    {name:"Diapers", type:"Baby", link:"papa.html", img:"images/pp.jpeg"},
-    {name:"Perfume", type:"Cosmetics", link:"parufe.html", img:"images/parufe.jpeg"},
-    {name:"Toilet Paper", type:"Hygiene", link:"ph.html", img:"images/ph.jpeg"},
-    {name:"Quaker Oats", type:"Food", link:"quaker.html", img:"images/quaker.jpeg"},
-    {name:"Sugar", type:"Food", link:"isukari.html", img:"images/isukari.jpeg"},
-    {name:"Rice", type:"Food", link:"umuceri.html", img:"images/umuceri.jpeg"}
+{name:"Water", type:"Water", link:"amazi.html", img:"amazi.jpeg"},
+{name:"Cooking Oil", type:"Oil", link:"amavuta.html", img:"amavuta.jpeg"},
+{name:"Body Lotion", type:"Cosmetics", link:"kwisiga.html", img:"kwisiga.jpeg"},
+{name:"Milk", type:"Milk", link:"amata.html", img:"amata.jpeg"},
+{name:"Biscuits", type:"Biscuits", link:"biswi.html", img:"biswi.jpeg"},
+{name:"Fanta", type:"Drink", link:"fanta.html", img:"fanta.jpeg"},
+{name:"Flour", type:"Flour", link:"ifarini.html", img:"ifarini.jpeg"},
+{name:"Maize Flour", type:"Flour", link:"ifu y ibigori.html", img:"ifu y ibigori.jpeg"},
+{name:"Porridge Flour", type:"Flour", link:"igikoma.html", img:"toha.jpeg"},
+{name:"Soap", type:"Soap", link:"isabune.html", img:"isabune.jpeg"},
+{name:"Juice", type:"Drink", link:"juice.html", img:"juice.webp"},
+{name:"Mayonnaise", type:"Food", link:"mayoneze.html", img:"mayoneze.jpeg"},
+{name:"Nido Milk", type:"Milk", link:"nido.html", img:"nido.jpeg"},
+{name:"Omo Powder", type:"Soap", link:"omo.html", img:"omo.jpeg"},
+{name:"Diapers", type:"Baby", link:"papa.html", img:"pp.jpeg"},
+{name:"Perfume", type:"Cosmetics", link:"parufe.html", img:"parufe.jpeg"},
+{name:"Toilet Paper", type:"Hygiene", link:"ph.html", img:"ph.jpeg"},
+{name:"Quaker Oats", type:"Food", link:"quaker.html", img:"quaker.jpeg"},
+{name:"Sugar", type:"Food", link:"isukari.html", img:"isukari.jpeg"},
+{name:"Rice", type:"Food", link:"umuceri.html", img:"umuceri.jpeg"}
 ];
 
 const container = document.getElementById("products");
 const searchInput = document.getElementById("search");
 
+/* DISPLAY */
 function displayProducts(list){
-    container.innerHTML = "";
-    list.forEach(p=>{
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-            <img src="${p.img}">
-            <h3>${p.name}</h3>
-            <a href="${p.link}">Open</a>
-        `;
-        container.appendChild(div);
-    });
+  container.innerHTML = "";
+  list.forEach(p=>{
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <img src="${p.img}">
+      <h3>${p.name}</h3>
+      <a class="open-btn" href="${p.link}">Open</a><br>
+      <button class="order-btn" onclick="openModal('${p.name}')">TUMIZA</button>
+    `;
+    container.appendChild(div);
+  });
 }
 
 displayProducts(allProducts);
 
 /* SEARCH */
 searchInput.addEventListener("keyup", ()=>{
-    const value = searchInput.value.toLowerCase();
-    const filtered = allProducts.filter(p =>
-        p.name.toLowerCase().includes(value) ||
-        p.type.toLowerCase().includes(value)
-    );
-    displayProducts(filtered);
+  const value = searchInput.value.toLowerCase();
+  const filtered = allProducts.filter(p =>
+    p.name.toLowerCase().includes(value) ||
+    p.type.toLowerCase().includes(value)
+  );
+  displayProducts(filtered);
 });
+
+/* MODAL */
+function openModal(product){
+  selectedProduct = product;
+  document.getElementById("productName").innerText = product;
+  document.getElementById("orderModal").style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("orderModal").style.display = "none";
+}
+
+/* SEND TO WHATSAPP */
+function sendOrder(){
+  const name = document.getElementById("custName").value;
+  const phoneUser = document.getElementById("custPhone").value;
+  const qty = document.getElementById("quantity").value;
+
+  if(!name || !phoneUser || !qty){
+    alert("Uzuza ibisabwa byose!");
+    return;
+  }
+
+  const message = `Muraho MAMMY SHOP:
+Izina: ${name}
+Telefoni: ${phoneUser}
+Product: ${selectedProduct}
+Quantity: ${qty}`;
+
+  const link = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(link, "_blank");
+}
 </script>
 
 </body>
